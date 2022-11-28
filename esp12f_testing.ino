@@ -4,6 +4,8 @@
 #include <ESPAsyncWebServer.h>
 #include <AsyncElegantOTA.h>
 #include <Adafruit_NeoPixel.h>
+#include "front_end.h"
+// #include "LittleFS.h"
 #ifdef __AVR__
  #include <avr/power.h> // Required for 16 MHz Adafruit Trinket
 #endif
@@ -16,6 +18,7 @@ Adafruit_NeoPixel pixels(pixelCount, pinNumber, NEO_GRB + NEO_KHZ800);
 
 const char* ssid = STASSID;
 const char* password = STAPSK;
+
 
 AsyncWebServer server(80);
 
@@ -39,7 +42,7 @@ void setup(void) {
   Serial.println(WiFi.localIP());
 
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
-    request->send(200, "text/plain", ssid);
+    request->send(200, "text/html", index_html); // index html in a different header file
   });
 
   AsyncElegantOTA.begin(&server);    // Start ElegantOTA
