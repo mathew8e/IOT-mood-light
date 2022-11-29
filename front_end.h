@@ -11,7 +11,8 @@ const char index_html[] PROGMEM = R"rawliteral(
   </style>
   </head>
   <body>
-    <h1> test2 </h1>
+    <h1> Led Lamp </h1>
+    <a href="/turn"> <button>%STATE%</button> </a>
   </body>
 </html>)rawliteral";
 

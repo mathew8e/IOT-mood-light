@@ -19,8 +19,20 @@ Adafruit_NeoPixel pixels(pixelCount, pinNumber, NEO_GRB + NEO_KHZ800);
 const char* ssid = STASSID;
 const char* password = STAPSK;
 
+String ledStripState = "ON";
+
 
 AsyncWebServer server(80);
+
+/* nastavení String ke zpětnému načtení do frontend */
+String processor(const String& var){
+    Serial.println(var);
+    if(var == "STATE"){
+      return ledStripState;
+    return "";
+  }
+}
+
 
 void setup(void) {
   pinMode(2, OUTPUT);
@@ -42,8 +54,15 @@ void setup(void) {
   Serial.println(WiFi.localIP());
 
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
-    request->send(200, "text/html", index_html); // index html in a different header file
+    request->send_P(200, "text/html", index_html, processor); // index html in a different header file
   });
+
+  // turn action 
+  server.on("/turn", HTTP_GET, [](AsyncWebServerRequest *request) {
+    turnLedStrip();
+    request->send_P(200, "text/html", index_html, processor); // index html in a different header file
+  });
+
 
   AsyncElegantOTA.begin(&server);    // Start ElegantOTA
   server.begin(); // asyncWebServer starts
@@ -51,14 +70,29 @@ void setup(void) {
 
   pixels.begin();
   pixels.clear(); //clears the neopixel
+
+  changeColors(255, 230, 255);
 }
 
 void loop(void) {
   digitalWrite(2, millis() % 1000 > 500 ? HIGH : LOW); // turning on and off the builtin led for debug
 
-  for(int i = 0; i < pixelCount; i++) {
-    pixels.setPixelColor(i, pixels.Color(255, 100, 255));
-  }
+}
 
-  pixels.show();
+void turnLedStrip() {
+  // turning off when its on and vice versa
+  if (ledStripState == "ON") { // if its off
+    changeColors(0, 0, 0);
+    ledStripState = "OFF";
+  } else { // if it is on
+    changeColors(255, 230, 255); // the neopixel is a bit green so i make it withe by lowering the g value
+    ledStripState = "ON";
+  }
+}
+
+void changeColors(int r, int g, int b) {
+  for(int i = 0; i < pixelCount-20; i++) {
+    pixels.setPixelColor(i, pixels.Color(r, g, b));
+    pixels.show();
+  }
 }
