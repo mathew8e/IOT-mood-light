@@ -16,18 +16,21 @@
 #endif
 
 const int PIXEL_COUNT = 144;
-const int PIN_NUMBER = 14;
-const int DHT_PIN = 0;
+const int LED_STRIP = 12;
+const int DHT_PIN = 14;
 const int PHOTO_RES = A0;
+const int BUTTON = 4;
 const int CALIBRATION_VALUE = 2; // calibration value for the dht sensor to be more precise
 
 int temperature;
 int humidity;
+int buttonCurVal;
+int buttonPrevVal;
 uint32_t delayMS = 1000; // how often is the humidity sensor going to update
 bool once; // boolean that make sure that the code doesnt run multiple times in one millisecond
 
 DHT_Unified dht(DHT_PIN, DHT11);
-Adafruit_NeoPixel pixels(PIXEL_COUNT, PIN_NUMBER, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel pixels(PIXEL_COUNT, LED_STRIP, NEO_GRB + NEO_KHZ800);
 
 #include "wifi_prihlaseni.h"
 
@@ -67,9 +70,9 @@ String processor(const String& var){
   } else if (var == "TEMP") {
     return String(temperature);
   } else if (var == "HUMID") {
-    // return String(dht.readHumidity());
-  } else if (var == "LIT") {
     return String(humidity);
+  } else if (var == "LIT") {
+    return String(analogRead(PHOTO_RES));
   }
   return "";
 }
@@ -77,6 +80,7 @@ String processor(const String& var){
 void setup(void) {
   pinMode(2, OUTPUT); // setting the builtin led to ouptut to blink
   pinMode(PHOTO_RES, INPUT); // setting the photo resistor pin to input
+  pinMode(BUTTON, INPUT_PULLUP);
 
   dht.begin();
 
@@ -116,7 +120,7 @@ void setup(void) {
   Serial.println("HTTP server started");
 
   pixels.begin();
-  pixels.clear(); //clears the neopixel
+  pixels.clear(); // clears the neopixel
 
   changeColors(255, 230, 255);
 }
@@ -124,6 +128,15 @@ void setup(void) {
 
 
 void loop(void) {
+  
+  buttonCurVal = digitalRead(BUTTON);
+
+
+  if (buttonCurVal == 0 && buttonPrevVal == 1) {
+    turnLedStrip();
+  }
+
+
   digitalWrite(2, millis() % 1000 > 500 ? HIGH : LOW); // turning on and off the builtin led for debug
 
   // if (millis() % 1000 == 1){ // every second the dht sensor will be read and stored into temperature variable
@@ -132,9 +145,11 @@ void loop(void) {
   //       Serial.println(temperature);
   //   }
   // }
+  Serial.println(buttonCurVal);
+  
 
 
-  if (millis() % delayMS == 1 & once){ // if modulo millis is the minimum time delay for the sensor it will one once the once boolean will switch and wait for the second millisecond
+  if (millis() % delayMS == 1 && once){ // if modulo millis is the minimum time delay for the sensor it will one once the once boolean will switch and wait for the second millisecond
                                                   // this makes sure that the function doesnt rune multiple times when in the one millisecond
     sensors_event_t event;
     dht.temperature().getEvent(&event);
@@ -155,6 +170,9 @@ void loop(void) {
   } else if (millis() % delayMS == 2) {
     once = true;
   }
+  
+  buttonPrevVal = digitalRead(BUTTON);
+  delay(1);
   
   
 }
