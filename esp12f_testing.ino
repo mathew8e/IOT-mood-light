@@ -15,7 +15,7 @@
  #include <avr/power.h> // Required for 16 MHz Adafruit Trinket
 #endif
 
-const int PIXEL_COUNT = 144;
+const int PIXEL_COUNT = 72;
 const int LED_STRIP_PIN = 12;
 const int DHT_PIN = 14;
 const int PHOTO_RES_PIN = A0;
@@ -46,14 +46,10 @@ Adafruit_NeoPixel pixels(PIXEL_COUNT, LED_STRIP_PIN, NEO_GRB + NEO_KHZ800);
 const char* ssid = STASSID;
 const char* password = STAPSK;
 
-
-
 AsyncWebServer server(80);
 
-
-
 void changeColors(int r, int g, int b) {
-  for(int i = 0; i < PIXEL_COUNT-20; i++) {
+  for(int i = 0; i < PIXEL_COUNT; i++) {
     pixels.setPixelColor(i, pixels.Color(r, g, b));
     pixels.show();
   }
@@ -101,13 +97,19 @@ String processor(const String& var){
   Serial.println(var);
   if(var == "STATE"){
     return ledStripState;
-  } else if (var == "TEMP") {
+  } if (var == "TEMP") {
     return String(temperature);
-  } else if (var == "HUMID") {
+  } if (var == "HUMID") {
     return String(humidity);
-  } else if (var == "LIT") {
+  } if (var == "LIT") {
     return String(analogRead(PHOTO_RES_PIN));
-  } 
+  } if (var == "REDVALUE") {
+    return "";
+  } if (var == "GREENVALUE") {
+    return "";
+  } if (var == "BLUEVALUE") {
+    return "";
+  }
   return "";
 }
 

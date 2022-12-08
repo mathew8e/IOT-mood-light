@@ -26,6 +26,30 @@ const char index_html[] PROGMEM = R"rawliteral(
 
       <a href="/"> <button> UPDATE </button> </a>
 
+      <div class="LED">
+ 
+      <h2>Nastavení LED</h2>
+
+      <p>
+      <input type="range" onchange="updateSliderPWM(this)" id="pwmSliderRED" min="0" max="255" value="%SLIDERVALUERED%" step="1" class="sliderR">
+
+      <span id="textSliderValueRED">%REDVALUE%</span>
+      </p>
+      <p>
+      <input type="range" onchange="updateSliderPWM(this)" id="pwmSliderGREEN" min="0" max="255" value="%SLIDERVALUEGREEN%" step="1" class="sliderG">
+
+      <span id="textSliderValueGREEN">%GREENVALUE%</span>
+      </p>
+      <p>
+      <input type="range" onchange="updateSliderPWM(this)" id="pwmSliderBLUE" min="0" max="255" value="%SLIDERVALUEBLUE%" step="1" class="sliderB">
+
+      <span id="textSliderValueBLUE">%BLUEVALUE%</span>
+      </p>
+ </div>
+
+
+      <br>
+      <br>
       <br>
       version 1.0.1
     <div>
