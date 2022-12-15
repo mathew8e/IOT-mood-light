@@ -61,7 +61,7 @@ void turnLedStrip() {
     changeColors(0, 0, 0);
     ledStripState = "OFF";
   } else { // if it is on
-    changeColors(200, 200, 200); // the neopixel is a bit green so i make it withe by lowering the g value
+    changeColors(150, 150, 140); // the neopixel is a bit green so i make it withe by lowering the g value
     ledStripState = "ON";
   }
 }

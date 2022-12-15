@@ -6,7 +6,11 @@
 const char index_html[] PROGMEM = R"rawliteral(
 <!DOCTYPE HTML><html><head>
   <title>Light interface</title>
+  <meta charset="UTF-8">
   <style>
+    body {
+        font-family: "Helvetica";
+    }
     .mainControll {
       text-align:center;
     }
@@ -28,7 +32,7 @@ const char index_html[] PROGMEM = R"rawliteral(
 
       <div class="LED">
  
-      <h2>Nastavení LED</h2>
+      <h2>LED Sliders</h2>
 
       <p>
       <input type="range" onchange="updateSliderPWM(this)" id="pwmSliderRED" min="0" max="255" value="%SLIDERVALUERED%" step="1" class="sliderR">
